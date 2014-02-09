@@ -32,6 +32,7 @@ SHELL = /bin/sh
 INSTALL 	= @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA    = @INSTALL_DATA@
+DESTDIR=
 
 MAKEINFO = `if [ -f ../texinfo/makeinfo/makeinfo ]; \
 	then echo ../texinfo/makeinfo/makeinfo; \

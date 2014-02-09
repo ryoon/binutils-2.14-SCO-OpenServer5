@@ -27,6 +27,7 @@ subdir = po
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 MKINSTALLDIRS = @MKINSTALLDIRS@
+DESTDIR=
 
 CC = @CC@
 GENCAT = @GENCAT@
@@ -70,9 +71,7 @@ INSTOBJEXT = @INSTOBJEXT@
 
 .po.gmo:
 	file=$(srcdir)/`echo $* | sed 's,.*/,,'`.gmo \
-	  && test -w $$file \
-	  && (rm -f $$file && $(GMSGFMT) -o $$file $< ) \
-	  || echo "$$file is not writable"
+	  && rm -f $$file && $(GMSGFMT) -o $$file $<
 
 .po.cat:
 	sed -f ../intl/po2msg.sed < $< > $*.msg \
@@ -113,16 +112,16 @@ install-data: install-data-@USE_NLS@
 install-data-no: all
 install-data-yes: all
 	if test -r $(MKINSTALLDIRS); then \
-	  $(MKINSTALLDIRS) $(datadir); \
+	  $(MKINSTALLDIRS) $(DESTDIR)$(datadir); \
 	else \
-	  $(top_srcdir)/mkinstalldirs $(datadir); \
+	  $(top_srcdir)/mkinstalldirs $(DESTDIR)$(datadir); \
 	fi
 	@catalogs='$(CATALOGS)'; \
 	for cat in $$catalogs; do \
 	  cat=`basename $$cat`; \
 	  case "$$cat" in \
-	    *.gmo) destdir=$(gnulocaledir);; \
-	    *)     destdir=$(localedir);; \
+	    *.gmo) destdir=$(DESTDIR)$(gnulocaledir);; \
+	    *)     destdir=$(DESTDIR)$(localedir);; \
 	  esac; \
 	  lang=`echo $$cat | sed 's/\$(CATOBJEXT)$$//'`; \
 	  dir=$$destdir/$$lang/LC_MESSAGES; \
@@ -155,12 +154,12 @@ install-data-yes: all
 	done
 	if test "$(PACKAGE)" = "gettext"; then \
 	  if test -r $(MKINSTALLDIRS); then \
-	    $(MKINSTALLDIRS) $(gettextsrcdir); \
+	    $(MKINSTALLDIRS) $(DESTDIR)$(gettextsrcdir); \
 	  else \
-	    $(top_srcdir)/mkinstalldirs $(gettextsrcdir); \
+	    $(top_srcdir)/mkinstalldirs $(DESTDIR)$(gettextsrcdir); \
 	  fi; \
 	  $(INSTALL_DATA) $(srcdir)/Makefile.in.in \
-			  $(gettextsrcdir)/Makefile.in.in; \
+			  $(DESTDIR)$(gettextsrcdir)/Makefile.in.in; \
 	else \
 	  : ; \
 	fi
@@ -173,12 +172,12 @@ uninstall:
 	for cat in $$catalogs; do \
 	  cat=`basename $$cat`; \
 	  lang=`echo $$cat | sed 's/\$(CATOBJEXT)$$//'`; \
-	  rm -f $(localedir)/$$lang/LC_MESSAGES/$(PACKAGE)$(INSTOBJEXT); \
-	  rm -f $(localedir)/$$lang/LC_MESSAGES/$(PACKAGE)$(INSTOBJEXT).m; \
-	  rm -f $(gnulocaledir)/$$lang/LC_MESSAGES/$(PACKAGE)$(INSTOBJEXT); \
-	  rm -f $(gnulocaledir)/$$lang/LC_MESSAGES/$(PACKAGE)$(INSTOBJEXT).m; \
+	  rm -f $(DESTDIR)$(localedir)/$$lang/LC_MESSAGES/$(PACKAGE)$(INSTOBJEXT); \
+	  rm -f $(DESTDIR)$(localedir)/$$lang/LC_MESSAGES/$(PACKAGE)$(INSTOBJEXT).m; \
+	  rm -f $(DESTDIR)$(gnulocaledir)/$$lang/LC_MESSAGES/$(PACKAGE)$(INSTOBJEXT); \
+	  rm -f $(DESTDIR)$(gnulocaledir)/$$lang/LC_MESSAGES/$(PACKAGE)$(INSTOBJEXT).m; \
 	done
-	rm -f $(gettextsrcdir)/po-Makefile.in.in
+	rm -f $(DESTDIR)$(gettextsrcdir)/po-Makefile.in.in
 
 check: all
 
